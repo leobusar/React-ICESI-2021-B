@@ -34,8 +34,15 @@ const TaskList = (props) => {
   const addTask = (task) => {
     let tasks = [...tasksList];
     if(task.id === null){
-      task.id = Math.floor(Math.random()*10000);
-      tasks.push(task);
+      //task.id = Math.floor(Math.random()*10000);
+      // tasks.push(task);
+      axios.post("/todos", 
+              {id: task.id, 
+              userId: task.userId, 
+              title: task.title, 
+              completed: task.completed})
+            .then((res) => console.log(res.data));
+           
     }else{
       let index  = tasks.findIndex( (taskitem) => task.id === taskitem.id );
       tasks[index] = task;
