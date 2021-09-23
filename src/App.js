@@ -1,5 +1,5 @@
 import './App.css';
-import TaskList  from  './components/TaskList';
+import routes from './config/routes';
 
 function App() {
 
@@ -7,7 +7,8 @@ function App() {
 
   return (
     <div className="App">
-      <TaskList owner={owner}/>
+
+       {routes} 
     </div>
   );
 }

@@ -9,7 +9,10 @@ import Paper from '@material-ui/core/Paper';
 import { makeStyles } from '@material-ui/core/styles';
 
 //import tasks from '../data/tasks';
-import axios from  '../config/axios';
+//import axios from  '../config/axios';
+import firebase from '../config/firebase';
+import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+
 import Task from './Task';
 import TaskForm from './TaskForm';
 
@@ -18,11 +21,23 @@ const TaskList = (props) => {
 
   const [tasksList, setTaskList] = useState([]);
   const [taskEdit,  setTaskEdit] = useState({ "userId": undefined, "id": undefined, "title": "", "completed": false });
+  const  firebaseDb = getFirestore(firebase);
 
-  useEffect(()=> {
-      axios.get("/todos?_start=20&_limit=20")
-      .then( (res) => setTaskList(res.data) ) ;
+  useEffect(() => {
+      // axios.get("/todos?_start=20&_limit=20")
+      // .then( (res) => setTaskList(res.data) ) ;
+        getTodos(firebaseDb)
+        .then( (res) => setTaskList(res) ) ;
+     // console.log(todoList);
   },[]);
+
+  const getTodos = async (db) => {
+    const todosCol = collection(db, 'todo');
+    const todoSnapshot = await getDocs(todosCol);
+    const todoList = todoSnapshot.docs.map(doc => doc.data());
+    return todoList;
+  }
+
 
   const useStyles = makeStyles({
     table: {
@@ -34,14 +49,18 @@ const TaskList = (props) => {
   const addTask = (task) => {
     let tasks = [...tasksList];
     if(task.id === null){
-      //task.id = Math.floor(Math.random()*10000);
+       task.id = Math.floor(Math.random()*10000);
+       //collection(firebaseDb,'todo');
+       //firebaseDb.collection('todo').doc(task.id).set(task);
+       //const id = firebaseDb.ref('todos').add(task);
+      //console.log(id);
       // tasks.push(task);
-      axios.post("/todos", 
-              {id: task.id, 
-              userId: task.userId, 
-              title: task.title, 
-              completed: task.completed})
-            .then((res) => console.log(res.data));
+      // axios.post("/todos", 
+      //         {id: task.id, 
+      //         userId: task.userId, 
+      //         title: task.title, 
+      //         completed: task.completed})
+      //       .then((res) => console.log(res.data));
            
     }else{
       let index  = tasks.findIndex( (taskitem) => task.id === taskitem.id );
@@ -65,7 +84,7 @@ const TaskList = (props) => {
 
   return (
     <div className="container">
-      <h1>Tareas de {props.owner.nombre}:</h1>
+      <h1>Tareas de :</h1>
       <TaskForm addTask={addTask} taskEdit={taskEdit}/>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="customized table">
