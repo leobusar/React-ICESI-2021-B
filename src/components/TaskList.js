@@ -11,7 +11,7 @@ import { makeStyles } from '@material-ui/core/styles';
 //import tasks from '../data/tasks';
 //import axios from  '../config/axios';
 import firebase from '../config/firebase';
-import { getFirestore, collection, getDocs } from 'firebase/firestore/lite';
+import { getFirestore, collection, getDocs, doc, setDoc, deleteDoc } from 'firebase/firestore';
 
 import Task from './Task';
 import TaskForm from './TaskForm';
@@ -48,8 +48,14 @@ const TaskList = (props) => {
 
   const addTask = (task) => {
     let tasks = [...tasksList];
-    if(task.id === null){
+    if(task.id === undefined)
        task.id = Math.floor(Math.random()*10000);
+
+       setDoc(doc(firebaseDb, "todo", task.id+""), task)
+             .then(() => {
+                getTodos(firebaseDb)
+                .then( (res) => setTaskList(res) ) ;               
+             });
        //collection(firebaseDb,'todo');
        //firebaseDb.collection('todo').doc(task.id).set(task);
        //const id = firebaseDb.ref('todos').add(task);
@@ -62,20 +68,25 @@ const TaskList = (props) => {
       //         completed: task.completed})
       //       .then((res) => console.log(res.data));
            
-    }else{
-      let index  = tasks.findIndex( (taskitem) => task.id === taskitem.id );
-      tasks[index] = task;
-    }
+    // }else{
+    //   let index  = tasks.findIndex( (taskitem) => task.id === taskitem.id );
+    //   tasks[index] = task;
+    // }
     //console.log(tasks);
     setTaskList(tasks);
     //console.log(tasksList);
   }
 
   const delTask =  (task) => {
-    let tasks = [...tasksList];
-    let index  = tasks.findIndex( (taskitem) => task.id === taskitem.id );
-    tasks.splice(index, 1);
-    setTaskList(tasks);
+    // let tasks = [...tasksList];
+    // let index  = tasks.findIndex( (taskitem) => task.id === taskitem.id );
+    // tasks.splice(index, 1);
+    // setTaskList(tasks);
+    deleteDoc(doc(firebaseDb, "todo", task.id+""))
+    .then(() => {
+       getTodos(firebaseDb)
+       .then( (res) => setTaskList(res) ) ;               
+    });    
   }
 
   const renderTasks = () => {

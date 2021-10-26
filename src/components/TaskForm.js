@@ -28,8 +28,8 @@ const TaskForm = ({ addTask, taskEdit }) => {
         let task = { id, title: titulo, completed, userId: 1 }
         setTitulo("");
         setCompleted(false);
-        setId(null);
-        setUserId(null);
+        setId(undefined);
+        setUserId(undefined);
         //console.log(task);
         addTask(task);
     }
