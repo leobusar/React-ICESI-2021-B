@@ -7,7 +7,7 @@ import NotFound from  '../components/NotFound';
 
 
 const  routing  = (
-    <Router>
+    <Router basename="/React-ICESI-2021-B/">
       <div>
         <Link to="/"> Home </Link>
         <Link to="/about"> About </Link>
